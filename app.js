@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -10,7 +10,11 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://linguaJoyUser:linguaJoyUser@cluster0.onldf.mongodb.net/?retryWrites=true&w=majority`;
+app.get("/", (req, res) => {
+  res.send("lingua joy is runninngggggg");
+});
+
+const uri = `mongodb+srv://linguaJoyUser:linguaJoyUser@cluster0.grbvc.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -19,10 +23,6 @@ const client = new MongoClient(uri, {
     strict: true,
     deprecationErrors: true,
   },
-});
-
-app.get("/", (req, res) => {
-  res.send("lingua joy is runninngggggg");
 });
 
 async function run() {
@@ -45,7 +45,7 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
-    
+
     app.get("/courses", async (req, res) => {
       const result = await coursesCollection.find().toArray();
       res.send(result);
@@ -58,7 +58,6 @@ async function run() {
       res.send(result);
     });
 
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
