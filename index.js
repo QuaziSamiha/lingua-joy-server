@@ -32,6 +32,7 @@ async function run() {
 
     const usersCollection = client.db("LinguaJoy").collection("users");
     const coursesCollection = client.db("LinguaJoy").collection("courses");
+    const cartCollection = client.db("LinguaJoy").collection("carts");
 
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -62,6 +63,14 @@ async function run() {
       const course = req.body;
       // console.log(course);
       const result = await coursesCollection.insertOne(course);
+      res.send(result);
+    });
+
+    // -------------all favourate course of the learner will be added here for further process ----------------------
+    app.post("/carts", async (req, res) => {
+      const course = req.body;
+      console.log(course);
+      const result = await cartCollection.insertOne(course);
       res.send(result);
     });
 
