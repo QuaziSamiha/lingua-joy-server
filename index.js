@@ -33,6 +33,7 @@ async function run() {
     const usersCollection = client.db("LinguaJoy").collection("users");
     const coursesCollection = client.db("LinguaJoy").collection("courses");
     const cartCollection = client.db("LinguaJoy").collection("carts");
+    const enrolledCoursesCollection = client.db("LinguaJoy").collection("enrolledCourses");
 
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -66,11 +67,62 @@ async function run() {
       res.send(result);
     });
 
-    // -------------all favourate course of the learner will be added here for further process ----------------------
+    // -------------all favourate course of the learner will be added here for further process ---------------------- 
+    app.get("/carts", async (req, res) => {
+      const email = req.query.email;
+      // console.log(email);
+      if (!email) {
+        res.send([]);
+      }
+      const query = { userEmail: email };
+      // console.log(query)
+      const result = await cartCollection.find(query).toArray();
+      // console.log(result)
+      res.send(result);
+    });
+
+    app.get("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id)
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.findOne(query);
+      // console.log(result)
+      res.send(result);
+    });
+
     app.post("/carts", async (req, res) => {
       const course = req.body;
       console.log(course);
       const result = await cartCollection.insertOne(course);
+      res.send(result);
+    });
+
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id)
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
+      // console.log(result)
+      res.send(result);
+    });
+
+    app.get("/enrolledCourses", async (req, res) => {
+      const email = req.query.email;
+      // console.log(email);
+      if (!email) {
+        res.send([]);
+      }
+      const query = { userEmail: email };
+      // console.log(query)
+      const result = await cartCollection.find(query).toArray();
+      // console.log(result)
+      res.send(result);
+    });
+
+    app.post("/enrolledCourses", async (req, res) => {
+      const course = req.body;
+      // console.log(course);
+      const result = await enrolledCoursesCollection.insertOne(course);
       res.send(result);
     });
 
