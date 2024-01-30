@@ -33,7 +33,14 @@ async function run() {
     const usersCollection = client.db("LinguaJoy").collection("users");
     const coursesCollection = client.db("LinguaJoy").collection("courses");
     const cartCollection = client.db("LinguaJoy").collection("carts");
-    const enrolledCoursesCollection = client.db("LinguaJoy").collection("enrolledCourses");
+    const enrolledCoursesCollection = client
+      .db("LinguaJoy")
+      .collection("enrolledCourses");
+
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
 
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -45,6 +52,18 @@ async function run() {
         return res.send({ message: "user already exists" });
       }
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    app.patch("/users/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          isAdmin: true,
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
       res.send(result);
     });
 
@@ -67,7 +86,19 @@ async function run() {
       res.send(result);
     });
 
-    // -------------all favourate course of the learner will be added here for further process ---------------------- 
+    app.patch("/courses/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          courseStatus: `admin`,
+        },
+      };
+      const result = await coursesCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    // -------------all favourate course of the learner will be added here for further process ----------------------
     app.get("/carts", async (req, res) => {
       const email = req.query.email;
       // console.log(email);
@@ -83,7 +114,7 @@ async function run() {
 
     app.get("/carts/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id)
+      console.log(id);
       const query = { _id: new ObjectId(id) };
       const result = await cartCollection.findOne(query);
       // console.log(result)
