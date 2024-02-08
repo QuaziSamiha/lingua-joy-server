@@ -207,7 +207,7 @@ async function run() {
       }
       const query = { userEmail: email };
       // console.log(query)
-      const result = await cartCollection.find(query).toArray();
+      const result = await enrolledCoursesCollection.find(query).toArray();
       // console.log(result)
       res.send(result);
     });
