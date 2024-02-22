@@ -13,7 +13,7 @@ app.use(express.json());
 // mongodb uri
 const uri = `mongodb+srv://linguaJoyUser:linguaJoyUser@cluster0.onldf.mongodb.net/?retryWrites=true&w=majority`;
 
-// Create a MongoClient 
+// creating client for mongodb
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -26,6 +26,7 @@ const client = new MongoClient(uri, {
 app.get("/", (req, res) => {
   res.send("lingua joy is runninngggggg");
 });
+// http://localhost:5000
 
 async function run() {
   try {
@@ -36,9 +37,7 @@ async function run() {
     const usersCollection = client.db("LinguaJoy").collection("users");
     const coursesCollection = client.db("LinguaJoy").collection("courses");
     const cartCollection = client.db("LinguaJoy").collection("carts");
-    const enrolledCoursesCollection = client
-      .db("LinguaJoy")
-      .collection("enrolledCourses");
+    const enrolledCoursesCollection = client.db("LinguaJoy").collection("enrolledCourses");
 
     // used in useUser hook
     app.get("/users", async (req, res) => {
@@ -62,7 +61,7 @@ async function run() {
       res.send(result);
     });
 
-    // used in admin dashboard page
+    // used in admin dashboard page ManageUsers component
     app.patch("/users/admin/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -75,7 +74,7 @@ async function run() {
       res.send(result);
     });
 
-    // used in admin dashboard page
+    // used in admin dashboard page ManageUsers component
     app.patch("/users/instructor/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -95,7 +94,7 @@ async function run() {
       res.send(result);
     }); //http://localhost:5000/courses
 
-    // used in course detail page
+    // used in CourseDetail page
     app.get("/courses/:id", async (req, res) => {
       const courseId = req.params.id;
       const query = { _id: new ObjectId(courseId) };
@@ -150,10 +149,10 @@ async function run() {
       res.send(result);
     });
 
-    // used in student/normal user dashboard when one paid for a course and successfully enrolled
+    // used in MakePayment component for student/normal user dashboard when one paid for a course and successfully enrolled
     app.patch("/courses/updated/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const filter = { _id: new ObjectId(id) };
       // Retrieve the current course document
       const currentCourse = await coursesCollection.findOne(filter);
@@ -190,9 +189,10 @@ async function run() {
       res.send(result);
     });
 
+    // calling from Route page loader method for MakePayment Component
     app.get("/carts/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const query = { _id: new ObjectId(id) };
       const result = await cartCollection.findOne(query);
       // console.log(result)
@@ -202,12 +202,12 @@ async function run() {
     // when one student 'clicked add to favourate' button from detailed page
     app.post("/carts", async (req, res) => {
       const course = req.body;
-      console.log(course);
+      // console.log(course);
       const result = await cartCollection.insertOne(course);
       res.send(result);
     });
 
-    // used in Learner folder SelectedCourses component
+    // used in Learner folder SelectedCourses & MakePayment component
     app.delete("/carts/:id", async (req, res) => {
       const id = req.params.id;
       // console.log(id)
